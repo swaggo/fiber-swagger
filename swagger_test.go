@@ -247,7 +247,7 @@ func TestWrapHandler(t *testing.T) {
 	swag.Register(swag.Name, &mockedSwag{})
 	w2 = performRequest("GET", "/doc.json", router)
 	assert.Equal(t, 200, w2.StatusCode)
-	assert.Equal(t, w2.Header.Get("Content-Type"), "application/json; charset=utf-8")
+	assert.Equal(t, w2.Header.Get("Content-Type"), fiber.MIMEApplicationJSONCharsetUTF8)
 
 	w3 := performRequest("GET", "/favicon-16x16.png", router)
 	assert.Equal(t, 200, w3.StatusCode)
@@ -259,7 +259,7 @@ func TestWrapHandler(t *testing.T) {
 
 	w5 := performRequest("GET", "/swagger-ui-bundle.js", router)
 	assert.Equal(t, 200, w5.StatusCode)
-	assert.Equal(t, w5.Header.Get("Content-Type"), "text/javascript; charset=utf-8")
+	assert.Equal(t, w5.Header.Get("Content-Type"), fiber.MIMEApplicationJavaScript)
 
 	w6 := performRequest("GET", "/notfound", router)
 	assert.Equal(t, 404, w6.StatusCode)
