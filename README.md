@@ -4,7 +4,7 @@ fiber middleware to automatically generate RESTful API documentation with Swagge
 [![Build Status](https://github.com/swaggo/fiber-swagger/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/features/actions)
 [![Codecov branch](https://img.shields.io/codecov/c/github/swaggo/fiber-swagger/master.svg)](https://codecov.io/gh/swaggo/fiber-swagger)
 [![Go Report Card](https://goreportcard.com/badge/github.com/swaggo/fiber-swagger)](https://goreportcard.com/report/github.com/swaggo/fiber-swagger)
-[![Release](https://img.shields.io/github/release/swaggo/fiber-swagger.svg?style=flat-square)](https://github.com/swaggo/echo-swagger/releases)
+[![Release](https://img.shields.io/github/release/swaggo/fiber-swagger.svg?style=flat-square)](https://github.com/swaggo/fiber-swagger/releases)
 
 
 ## Usage
