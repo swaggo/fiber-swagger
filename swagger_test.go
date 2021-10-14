@@ -271,7 +271,7 @@ func TestWrapHandler(t *testing.T) {
 func performRequest(method, target string, e *fiber.App) *http.Response {
 	r := httptest.NewRequest(method, target, nil)
 
-	res, _ := e.Test(r, 100)
+	res, _ := e.Test(r)
 
 	return res
 }

@@ -2,7 +2,6 @@ package fiberSwagger
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -80,7 +79,7 @@ func FiberWrapHandler(configFns ...func(c *Config)) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		matches := re.FindStringSubmatch(string(c.Request().URI().Path()))
 		path := matches[2]
-		log.Printf("path %s", c.Request().URI().Path())
+
 		once.Do(func() {
 			h.Prefix = matches[1]
 		})
@@ -92,7 +91,6 @@ func FiberWrapHandler(configFns ...func(c *Config)) fiber.Handler {
 		case ".png", ".js":
 			c.Type(fileExt[0:])
 		}
-		log.Printf("fileExt %s", fileExt)
 
 		switch path {
 		case "":
