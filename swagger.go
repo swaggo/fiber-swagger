@@ -85,18 +85,12 @@ func FiberWrapHandler(configFns ...func(c *Config)) fiber.Handler {
 		})
 
 		fileExt := filepath.Ext(path)
-		switch fileExt {
-		case ".html", ".css", ".json":
-			c.Type(fileExt[0:], "utf-8")
-		case ".png", ".js":
-			c.Type(fileExt[0:])
-		}
-
 		switch path {
 		case "":
 			return c.Redirect(filepath.Join(h.Prefix, "index.html"), fiber.StatusMovedPermanently)
 
 		case "index.html":
+			c.Type(fileExt[0:], "utf-8")
 			return index.Execute(c, config)
 		case "doc.json":
 			doc, err := swag.ReadDoc()
@@ -105,10 +99,19 @@ func FiberWrapHandler(configFns ...func(c *Config)) fiber.Handler {
 				return err
 			}
 
+			c.Type(fileExt[0:], "utf-8")
 			return c.SendString(doc)
 		default:
 			handler := fasthttpadaptor.NewFastHTTPHandler(h)
 			handler(c.Context())
+
+			switch fileExt {
+			case ".css":
+				c.Type(fileExt[0:], "utf-8")
+			case ".png", ".js":
+				c.Type(fileExt[0:])
+			}
+
 			return nil
 		}
 	}
