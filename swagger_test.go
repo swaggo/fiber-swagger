@@ -237,35 +237,33 @@ func TestWrapHandler(t *testing.T) {
 
 	router.Get("/*", FiberWrapHandler(DocExpansion("none"), DomID("#swagger-ui")))
 
-	w1 := performRequest("GET", "/index.html", router)
-	assert.Equal(t, 200, w1.StatusCode)
+	w1 := performRequest(http.MethodGet, "/index.html", router)
+	assert.Equal(t, http.StatusOK, w1.StatusCode)
 	assert.Equal(t, w1.Header.Get("Content-Type"), "text/html; charset=utf-8")
 
-	w2 := performRequest("GET", "/doc.json", router)
-	assert.Equal(t, 500, w2.StatusCode)
+	w2 := performRequest(http.MethodGet, "/doc.json", router)
+	assert.Equal(t, http.StatusInternalServerError, w2.StatusCode)
 
 	swag.Register(swag.Name, &mockedSwag{})
-	w2 = performRequest("GET", "/doc.json", router)
-	assert.Equal(t, 200, w2.StatusCode)
+	w2 = performRequest(http.MethodGet, "/doc.json", router)
+	assert.Equal(t, http.StatusOK, w2.StatusCode)
 	assert.Equal(t, w2.Header.Get("Content-Type"), fiber.MIMEApplicationJSONCharsetUTF8)
 
-	w3 := performRequest("GET", "/favicon-16x16.png", router)
-	assert.Equal(t, 200, w3.StatusCode)
+	w3 := performRequest(http.MethodGet, "/favicon-16x16.png", router)
+	assert.Equal(t, http.StatusOK, w3.StatusCode)
 	assert.Equal(t, w3.Header.Get("Content-Type"), "image/png")
 
-	w4 := performRequest("GET", "/swagger-ui.css", router)
-	assert.Equal(t, 200, w4.StatusCode)
+	w4 := performRequest(http.MethodGet, "/swagger-ui.css", router)
+	assert.Equal(t, http.StatusOK, w4.StatusCode)
 	assert.Equal(t, w4.Header.Get("Content-Type"), "text/css; charset=utf-8")
 
-	w5 := performRequest("GET", "/swagger-ui-bundle.js", router)
-	assert.Equal(t, 200, w5.StatusCode)
+	w5 := performRequest(http.MethodGet, "/swagger-ui-bundle.js", router)
+	assert.Equal(t, http.StatusOK, w5.StatusCode)
 	assert.Equal(t, w5.Header.Get("Content-Type"), fiber.MIMEApplicationJavaScript)
 
-	w6 := performRequest("GET", "/notfound", router)
-	assert.Equal(t, 404, w6.StatusCode)
+	assert.Equal(t, http.StatusNotFound, performRequest(http.MethodGet, "/notfound", router).StatusCode)
 
-	w7 := performRequest("GET", "/swagger/", router)
-	assert.Equal(t, 301, w7.StatusCode)
+	assert.Equal(t, 301, performRequest(http.MethodGet, "/swagger/", router).StatusCode)
 }
 
 func performRequest(method, target string, e *fiber.App) *http.Response {
@@ -314,4 +312,20 @@ func TestPersistAuthorization(t *testing.T) {
 	configFunc := PersistAuthorization(expected)
 	configFunc(&cfg)
 	assert.Equal(t, expected, cfg.PersistAuthorization)
+}
+
+func TestInstanceName(t *testing.T) {
+	var cfg Config
+
+	assert.Equal(t, "", cfg.InstanceName)
+
+	expected := swag.Name
+	configFunc := InstanceName(expected)
+	configFunc(&cfg)
+	assert.Equal(t, expected, cfg.InstanceName)
+
+	expected = "custom_name"
+	configFunc = InstanceName(expected)
+	configFunc(&cfg)
+	assert.Equal(t, expected, cfg.InstanceName)
 }

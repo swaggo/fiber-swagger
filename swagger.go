@@ -17,9 +17,10 @@ import (
 type Config struct {
 	// The url pointing to API definition (normally swagger.json or swagger.yaml). Default is `mockedSwag.json`.
 	URL                  string
-	DeepLinking          bool
+	InstanceName         string
 	DocExpansion         string
 	DomID                string
+	DeepLinking          bool
 	PersistAuthorization bool
 }
 
@@ -51,8 +52,16 @@ func DomID(domID string) func(c *Config) {
 	}
 }
 
-// If set to true, it persists authorization data and it would not be lost on browser close/refresh
-// Defaults to false
+// InstanceName set the instance name that was used to generate the swagger documents
+// Defaults to swag.Name ("swagger").
+func InstanceName(name string) func(*Config) {
+	return func(c *Config) {
+		c.InstanceName = name
+	}
+}
+
+// PersistAuthorization Persist authorization information over browser close/refresh.
+// Defaults to false.
 func PersistAuthorization(persistAuthorization bool) func(c *Config) {
 	return func(c *Config) {
 		c.PersistAuthorization = persistAuthorization
@@ -66,59 +75,60 @@ var WrapHandler = FiberWrapHandler()
 func FiberWrapHandler(configFns ...func(c *Config)) fiber.Handler {
 	var once sync.Once
 
-	h := swaggerFiles.Handler
+	handler := swaggerFiles.Handler
 
-	config := &Config{
+	config := Config{
 		URL:          "doc.json",
-		DeepLinking:  true,
 		DocExpansion: "list",
 		DomID:        "#swagger-ui",
+		InstanceName: swag.Name,
+		DeepLinking:  true,
 	}
 
 	for _, configFn := range configFns {
-		configFn(config)
+		configFn(&config)
 	}
 
 	// create a template with name
-	t := template.New("swagger_index.html")
-	index, _ := t.Parse(indexTemplate)
+	index, _ := template.New("swagger_index.html").Parse(indexTemplate)
 
 	var re = regexp.MustCompile(`^(.*/)([^?].*)?[?|.]*$`)
 
-	return func(c *fiber.Ctx) error {
-		matches := re.FindStringSubmatch(string(c.Request().URI().Path()))
+	return func(ctx *fiber.Ctx) error {
+		matches := re.FindStringSubmatch(string(ctx.Request().URI().Path()))
 		path := matches[2]
 
 		once.Do(func() {
-			h.Prefix = matches[1]
+			handler.Prefix = matches[1]
 		})
 
 		fileExt := filepath.Ext(path)
 		switch path {
 		case "":
-			return c.Redirect(filepath.Join(h.Prefix, "index.html"), fiber.StatusMovedPermanently)
+			return ctx.Redirect(filepath.Join(handler.Prefix, "index.html"), fiber.StatusMovedPermanently)
 
 		case "index.html":
-			c.Type(fileExt[0:], "utf-8")
-			return index.Execute(c, config)
+			ctx.Type(fileExt[0:], "utf-8")
+
+			return index.Execute(ctx, config)
 		case "doc.json":
-			doc, err := swag.ReadDoc()
+			doc, err := swag.ReadDoc(config.InstanceName)
 			if err != nil {
-				_, err := c.Status(http.StatusInternalServerError).WriteString(http.StatusText(http.StatusInternalServerError))
+				_, err := ctx.Status(http.StatusInternalServerError).WriteString(http.StatusText(http.StatusInternalServerError))
+
 				return err
 			}
 
-			c.Type(fileExt[0:], "utf-8")
-			return c.SendString(doc)
+			ctx.Type(fileExt[0:], "utf-8")
+			return ctx.SendString(doc)
 		default:
-			handler := fasthttpadaptor.NewFastHTTPHandler(h)
-			handler(c.Context())
+			fasthttpadaptor.NewFastHTTPHandler(handler)(ctx.Context())
 
 			switch fileExt {
 			case ".css":
-				c.Type(fileExt[0:], "utf-8")
+				ctx.Type(fileExt[0:], "utf-8")
 			case ".png", ".js":
-				c.Type(fileExt[0:])
+				ctx.Type(fileExt[0:])
 			}
 
 			return nil
