@@ -80,7 +80,7 @@ func FiberWrapHandler(configFns ...func(c *Config)) fiber.Handler {
 	config := Config{
 		URL:          "doc.json",
 		DocExpansion: "list",
-		DomID:        "#swagger-ui",
+		DomID:        "swagger-ui",
 		InstanceName: swag.Name,
 		DeepLinking:  true,
 	}
@@ -214,7 +214,7 @@ window.onload = function() {
     url: "{{.URL}}",
     deepLinking: {{.DeepLinking}},
     docExpansion: "{{.DocExpansion}}",
-    dom_id: "{{.DomID}}",
+    dom_id: "#{{.DomID}}",
     persistAuthorization: {{.PersistAuthorization}},
     validatorUrl: null,
     presets: [
