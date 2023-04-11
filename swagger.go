@@ -13,7 +13,7 @@ import (
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 )
 
-// Config stores echoSwagger configuration variables.
+// Config stores fiberSwagger configuration variables.
 type Config struct {
 	// The url pointing to API definition (normally swagger.json or swagger.yaml). Default is `mockedSwag.json`.
 	URL                  string
@@ -68,7 +68,7 @@ func PersistAuthorization(persistAuthorization bool) func(c *Config) {
 	}
 }
 
-// WrapHandler wraps swaggerFiles.Handler and returns echo.HandlerFunc
+// WrapHandler wraps swaggerFiles.Handler and returns fiber.Handler
 var WrapHandler = FiberWrapHandler()
 
 // FiberWrapHandler wraps `http.Handler` into `fiber.Handler`.
