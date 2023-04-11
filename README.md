@@ -1,4 +1,5 @@
 # fiber-swagger
+
 fiber middleware to automatically generate RESTful API documentation with Swagger 2.0.
 
 [![Build Status](https://github.com/swaggo/fiber-swagger/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/features/actions)
@@ -6,25 +7,31 @@ fiber middleware to automatically generate RESTful API documentation with Swagge
 [![Go Report Card](https://goreportcard.com/badge/github.com/swaggo/fiber-swagger)](https://goreportcard.com/report/github.com/swaggo/fiber-swagger)
 [![Release](https://img.shields.io/github/release/swaggo/fiber-swagger.svg?style=flat-square)](https://github.com/swaggo/fiber-swagger/releases)
 
-
 ## Usage
 
 ### Start using it
+
 1. Add comments to your API source code, [See Declarative Comments Format](https://github.com/swaggo/swag#declarative-comments-format).
 2. Download [Swag](https://github.com/swaggo/swag) for Go by using:
+
 ```sh
 $ go get github.com/swaggo/swag/cmd/swag
 ```
+
 3. Run the [Swag](https://github.com/swaggo/swag) in your Go project root folder which contains `main.go` file, [Swag](https://github.com/swaggo/swag) will parse comments and generate required files(`docs` folder and `docs/doc.go`).
-```sh_ "github.com/swaggo/echo-swagger/v2/example/docs"
+
+```sh
 $ swag init
 ```
+
 4. Download [fiber-swagger](https://github.com/swaggo/fiber-swagger) by using:
+
 ```sh
 $ go get -u github.com/swaggo/fiber-swagger
 ```
 
 And import following in your code:
+
 ```go
 import "github.com/swaggo/fiber-swagger" // fiber-swagger middleware
 ```
