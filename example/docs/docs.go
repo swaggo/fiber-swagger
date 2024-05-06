@@ -8,7 +8,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/swaggo/swag"
+	"github.com/swaggo/swag/v2"
 )
 
 var doc = `{
