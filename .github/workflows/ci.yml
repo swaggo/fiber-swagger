@@ -18,6 +18,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
+      - name: Gather dependencies
+        run: go mod download
       - name: test
         run: go test -coverprofile=coverage.txt -covermode=atomic
       - name: coverage
