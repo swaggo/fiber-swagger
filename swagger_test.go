@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/swaggo/swag"
+	"github.com/swaggo/swag/v2"
 )
 
 type mockedSwag struct{}
